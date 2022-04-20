@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { useEffect } from 'react'
+import React, { useState } from 'react';
+import { useEffect } from 'react';
+import Spinner from '../layout/Spinner';
 
 function UserResults() {
   const [users, setUsers] = useState([])
@@ -8,7 +9,7 @@ function UserResults() {
   useEffect(()=> {
     fetchUsers()
   }, [])
-
+  //api call
   const fetchUsers = async () => {
     const response = await fetch(`${process.env.REACT_APP_GITHUB_URL}/users`,{
       headers: {
@@ -16,6 +17,7 @@ function UserResults() {
       }
     })
     const data = await response.json()
+    //sets the state with the data and that loading is done
     setUsers(data)
     setLoading(false)
   }
@@ -29,7 +31,7 @@ function UserResults() {
     </div>
     )
   } else {
-    return <h3>loading...</h3>
+    return <h3>{Spinner}</h3>
   }
   
 }

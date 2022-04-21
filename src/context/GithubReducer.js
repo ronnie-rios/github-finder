@@ -10,7 +10,12 @@ const githubReducer = (state, action) => {
                 //as if we had the state, set loading to false
                 loading: false
             }
-        
+        case 'SET_LOADING':
+            //setting the loading state
+             return {
+                ...state,
+                loading: true
+            }
         //no action returns current state
         default:
             return state

@@ -34,22 +34,27 @@ export const GithubProvider = ({ children }) => {
       
       dispatch({
           type: 'GET_USERS',
-          //data from the API
+          //data from the API which is retrieved from the searchUsers func above
           payload: items,
       })
       }
+    //clear users
+    const clearUsers = () => dispatch({
+      type: 'CLEAR_USERS'
+    })
       
-      //set loading creating a function to dispatch the state
-      const setLoading = () => dispatch({ 
-        type: 'SET_LOADING'
-      })
+    //set loading creating a function to dispatch the state
+    const setLoading = () => dispatch({ 
+      type: 'SET_LOADING'
+    })
 
-
+    
     return <GithubContext.Provider value={{
         //state from the usereducer
         users: state.users,
         loading: state.loading,
-        searchUsers
+        searchUsers,
+        clearUsers
     }}>
         {children}
     </GithubContext.Provider>

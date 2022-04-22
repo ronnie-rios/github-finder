@@ -1,5 +1,5 @@
 import { createContext, useReducer  } from "react";
-import githubReducer from "../GithubReducer";
+import githubReducer from "./GithubReducer";
 
 const GithubContext = createContext();
 
@@ -9,6 +9,7 @@ const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN
 export const GithubProvider = ({ children }) => {
     const initialState = {
         users: [],
+        user: {},
         loading: true
     }
 
@@ -38,6 +39,31 @@ export const GithubProvider = ({ children }) => {
           payload: items,
       })
       }
+
+      const getUser = async (login) => {
+        setLoading()
+        const response = await fetch(`${GITHUB_URL}/users/${login}`, {
+          headers: {
+            Authorization: `token ${GITHUB_TOKEN}`
+          }
+        })
+
+        if (response.status ===404) {
+          window.location ='/notfound'
+        } else {
+          //destructure the endpoint obj 
+        const data = await response.json()
+        
+        dispatch({
+            type: 'GET_USER',
+            //data from the API which is retrieved from the searchUsers func above
+            payload: data,
+        })
+        }
+        
+        }
+
+
     //clear users
     const clearUsers = () => dispatch({
       type: 'CLEAR_USERS'
@@ -53,8 +79,10 @@ export const GithubProvider = ({ children }) => {
         //state from the usereducer
         users: state.users,
         loading: state.loading,
+        user: state.user,
         searchUsers,
-        clearUsers
+        clearUsers,
+        getUser
     }}>
         {children}
     </GithubContext.Provider>

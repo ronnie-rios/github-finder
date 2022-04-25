@@ -1,6 +1,4 @@
-import { Action } from "history";
 import { createContext, useReducer  } from "react";
-import { createRenderer } from "react-dom/test-utils";
 import githubReducer from "./GithubReducer";
 
 const GithubContext = createContext();
@@ -18,53 +16,29 @@ export const GithubProvider = ({ children }) => {
 
     //destrucutre, get the state and the dispatch which dispatches an action to a user
     const [state, dispatch] = useReducer(githubReducer, initialState)
-
-    //testing the api call to get users
-    const searchUsers = async (text) => {
-      //called from the dispatch on line 36  
+    const getUser = async (login) => {
       setLoading()
-      //setting the params q to the text from the form
-      const params = new URLSearchParams({ 
-        q: text
+      const response = await fetch(`${GITHUB_URL}/users/${login}`, {
+      headers: {
+          Authorization: `token ${GITHUB_TOKEN}`
+      }
       })
 
-      const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`
-        }
-      })
+      if (response.status ===404) {
+      window.location ='/notfound'
+      } else {
       //destructure the endpoint obj 
-      const { items } = await response.json()
+      const data = await response.json()
       
       dispatch({
-          type: 'GET_USERS',
+          type: 'GET_USER',
           //data from the API which is retrieved from the searchUsers func above
-          payload: items,
+          payload: data,
       })
       }
+      
+      }
 
-      const getUser = async (login) => {
-        setLoading()
-        const response = await fetch(`${GITHUB_URL}/users/${login}`, {
-          headers: {
-            Authorization: `token ${GITHUB_TOKEN}`
-          }
-        })
-
-        if (response.status ===404) {
-          window.location ='/notfound'
-        } else {
-          //destructure the endpoint obj 
-        const data = await response.json()
-        
-        dispatch({
-            type: 'GET_USER',
-            //data from the API which is retrieved from the searchUsers func above
-            payload: data,
-        })
-        }
-        
-        }
         const getRepos = async ( login ) => {
           //called from the dispatch on line 36  
           setLoading()
@@ -104,11 +78,9 @@ export const GithubProvider = ({ children }) => {
     
     return <GithubContext.Provider value={{
         //state from the usereducer
-        users: state.users,
-        loading: state.loading,
-        user: state.user,
-        repos: state.repos,
-        searchUsers,
+        //spreading the state.users/state.repos etc
+       ...state,
+       dispatch,
         clearUsers,
         getUser,
         getRepos

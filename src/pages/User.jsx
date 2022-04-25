@@ -23,7 +23,7 @@ function User() {
         }
         getUserData()
 
-    }, [])
+    }, [dispatch, params.login])
 
     //destructure from the user obj to get the props of the user
     const {

@@ -2,15 +2,17 @@ import React, { useEffect, useContext } from 'react';
 import { FaCodepen, FaStore, FaUserFriends, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import RepoList from '../components/repos/RepoList';
 import GithubContext from '../context/github/GithubContext';
 import Spinner from '../components/layout/Spinner'
 
 function User() {
-  const {getUser, user, loading} = useContext(GithubContext)
+  const { getUser, user, loading, getRepos, repos } = useContext(GithubContext)
   const params = useParams()
 
     useEffect(() => {
         getUser(params.login)
+        getRepos(params.login)
     }, [])
 
     //destructure from the user obj to get the props of the user
@@ -151,6 +153,7 @@ function User() {
                         </div>
                     </div>
                 </div>
+                <RepoList repos={repos}/>
             </div>
         </>
     )

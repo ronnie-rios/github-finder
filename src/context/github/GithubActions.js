@@ -20,3 +20,39 @@ export const searchUsers = async (text) => {
     return items
     }
 
+export const getUser = async (login) => {
+    const response = await fetch(`${GITHUB_URL}/users/${login}`, {
+    headers: {
+        Authorization: `token ${GITHUB_TOKEN}`
+    }
+    })
+
+    if (response.status ===404) {
+    window.location ='/notfound'
+    } else {
+    //destructure the endpoint obj 
+    const data = await response.json()
+    
+        return data
+    }
+    
+    }
+
+export const getRepos = async ( login ) => {
+//called from the dispatch on line 36  
+
+    const params = new URLSearchParams({ 
+        sort: 'created',
+        per_page: 10
+    })
+
+    const response = await fetch(`${GITHUB_URL}/users/${login}/repos?${params}`, {
+        headers: {
+        Authorization: `token ${GITHUB_TOKEN}`
+        }
+    })
+    //destructure the endpoint obj 
+    const data = await response.json()
+
+    return data
+    }

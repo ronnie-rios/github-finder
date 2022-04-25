@@ -5,14 +5,24 @@ import { useParams } from 'react-router-dom';
 import RepoList from '../components/repos/RepoList';
 import GithubContext from '../context/github/GithubContext';
 import Spinner from '../components/layout/Spinner'
+import { getUser, getRepos } from '../context/github/GithubActions';
 
 function User() {
-  const { getUser, user, loading, getRepos, repos } = useContext(GithubContext)
+  const { user, loading, repos, dispatch } = useContext(GithubContext)
   const params = useParams()
 
     useEffect(() => {
-        getUser(params.login)
-        getRepos(params.login)
+        dispatch({ type: 'SET_LOADING' })
+        const getUserData = async() => {
+            const userData = await getUser(params.login)
+            dispatch({ type: 'GET_USER', payload: userData })
+        
+       
+            const repoData = await getRepos(params.login)
+            dispatch({ type: 'GET_REPOS', payload: repoData })
+        }
+        getUserData()
+
     }, [])
 
     //destructure from the user obj to get the props of the user
